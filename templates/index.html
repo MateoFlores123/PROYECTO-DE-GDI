@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Pre-Resoluciones - Municipalidad</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏛️ Sistema de Pre-Resoluciones</h1>
+            <p>Municipalidad Distrital - Gestión de Expedientes y Resoluciones</p>
+        </div>
+        
+        <div class="nav-tabs">
+            <button class="nav-tab active" onclick="showTab('inicio')">📊 INICIO</button>
+            <button class="nav-tab" onclick="showTab('administrados')">👥 Administrados</button>
+            <button class="nav-tab" onclick="showTab('expedientes')">📁 Expedientes</button>
+            <button class="nav-tab" onclick="showTab('proveidos')">📋 Proveídos</button>
+            <button class="nav-tab" onclick="showTab('preresoluciones')">⚖️ Pre-Resoluciones</button>
+            <button class="nav-tab" onclick="showTab('consultas')">🔍 Consultas Avanzadas</button>
+            <button class="nav-tab" onclick="showTab('nuevo')">➕ Nuevo Documento</button>
+        </div>
+        
+        <!-- DASHBOARD -->
+        <div id="inicio" class="tab-content active">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number" id="total-expedientes">0</div>
+                    <div class="stat-label">Expedientes Activos</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="total-proveidos">0</div>
+                    <div class="stat-label">Proveídos Generados</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="total-preresoluciones">0</div>
+                    <div class="stat-label">Pre-Resoluciones</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="pendientes">0</div>
+                    <div class="stat-label">Pendientes de Revisión</div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h3>📈 Resumen del Sistema</h3>
+                <p>Bienvenido al Sistema de Pre-Resoluciones Municipal. Desde aquí puedes gestionar expedientes, proveídos y pre-resoluciones de manera eficiente.</p>
+                <div class="quick-actions">
+                    <button class="btn" onclick="showTab('administrados')">👤 Gestionar Administrados</button>
+                    <button class="btn" onclick="showTab('nuevo')">📝 Crear Nuevo Documento</button>
+                    <button class="btn" onclick="showTab('consultas')">🔍 Ejecutar Consultas</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- ADMINISTRADOS -->
+        <div id="administrados" class="tab-content">
+            <div class="card">
+                <h3>👥 Gestión de Administrados</h3>
+                <div class="filtros">
+                    <input type="text" id="filtro-administrado" placeholder="🔍 Buscar administrado..." onkeyup="filtrarAdministrados()">
+                </div>
+                <table id="tabla-administrados">
+                    <thead>
+                        <tr>
+                            <th>DNI/RUC</th>
+                            <th>Nombre</th>
+                            <th>Dirección</th>
+                            <th>Urbanización</th>
+                            <th>Ciudad</th>
+                            <th>Calle</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="cuerpo-administrados">
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="card">
+                <h3>📝 Solicitudes de Administrados</h3>
+                <div class="filtros">
+                    <input type="text" id="filtro-solicitud" placeholder="🔍 Buscar solicitud..." onkeyup="filtrarSolicitudes()">
+                </div>
+                <table id="tabla-solicitudes">
+                    <thead>
+                        <tr>
+                            <th>N° Solicitud</th>
+                            <th>Administrado</th>
+                            <th>Título</th>
+                            <th>Fecha</th>
+                            <th>Estado</th>
+                            <th>Expediente</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="cuerpo-solicitudes">
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="form-row">
+                <div class="card" style="flex: 1;">
+                    <h3>👤 Agregar Nuevo Administrado</h3>
+                    <form id="form-administrado" onsubmit="agregarAdministrado(event)">
+                        <div class="form-group">
+                            <label for="d_r">DNI/RUC:</label>
+                            <input type="text" id="d_r" name="d_r" required maxlength="11" placeholder="Ej: 71584562101">
+                        </div>
+                        <div class="form-group">
+                            <label for="noma">Nombre Completo:</label>
+                            <input type="text" id="noma" name="noma" required placeholder="Ej: Juan Perez Rios">
+                        </div>
+                        <div class="form-group">
+                            <label for="dir_d">Dirección:</label>
+                            <input type="text" id="dir_d" name="dir_d" required placeholder="Ej: Av. Peru 123">
+                        </div>
+                        <div class="form-group">
+                            <label for="dir_a">Urbanización:</label>
+                            <input type="text" id="dir_a" name="dir_a" required placeholder="Ej: Cercado">
+                        </div>
+                        <div class="form-group">
+                            <label for="dir_c">Ciudad:</label>
+                            <input type="text" id="dir_c" name="dir_c" required value="Arequipa">
+                        </div>
+                        <div class="form-group">
+                            <label for="dir_n">Calle/Jr/Av:</label>
+                            <input type="text" id="dir_n" name="dir_n" required placeholder="Ej: Calle A">
+                        </div>
+                        <button type="submit" class="btn btn-success">➕ Agregar Administrado</button>
+                    </form>
+                </div>
+
+                <div class="card" style="flex: 1;">
+                    <h3>📄 Generar Nueva Solicitud</h3>
+                    <form id="form-solicitud" onsubmit="agregarSolicitud(event)">
+                        <div class="form-group">
+                            <label for="administrado-solicitud">Administrado:</label>
+                            <select id="administrado-solicitud" required>
+                                <option value="">Seleccionar administrado...</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="mesa-partes">Mesa de Partes:</label>
+                            <select id="mesa-partes" required>
+                                <option value="">Seleccionar mesa de partes...</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="tita-solicitud">Título de Solicitud:</label>
+                            <input type="text" id="tita-solicitud" required placeholder="Ej: Licencia de Construcción">
+                        </div>
+                        <div class="form-group">
+                            <label for="asnt-solicitud">Asunto Detallado:</label>
+                            <textarea id="asnt-solicitud" required placeholder="Describa detalladamente el motivo de la solicitud..." rows="4"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-success">📄 Generar Solicitud y Expediente</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <!-- EXPEDIENTES -->
+        <div id="expedientes" class="tab-content">
+            <div class="card">
+                <h3>📂 Lista de Expedientes</h3>
+                <div class="filtros">
+                    <input type="text" id="filtro-expediente" placeholder="🔍 Buscar expediente..." onkeyup="filtrarExpedientes()">
+                    <select id="filtro-estado-expediente" onchange="filtrarExpedientes()">
+                        <option value="">Todos los estados</option>
+                        <option value="En revision">En revisión</option>
+                        <option value="Aprobado">Aprobado</option>
+                        <option value="Observado">Observado</option>
+                        <option value="Pendiente">Pendiente</option>
+                    </select>
+                </div>
+                <table id="tabla-expedientes">
+                    <thead>
+                        <tr>
+                            <th>N° Expediente</th>
+                            <th>Fecha</th>
+                            <th>Estado</th>
+                            <th>Responsable</th>
+                            <th>Asunto</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="cuerpo-expedientes">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- PROVEÍDOS -->
+        <div id="proveidos" class="tab-content">
+            <div class="card">
+                <h3>📋 Proveídos Generados</h3>
+                <div class="filtros">
+                    <input type="text" id="filtro-proveido" placeholder="🔍 Buscar proveído..." onkeyup="filtrarProveidos()">
+                </div>
+                <table id="tabla-proveidos">
+                    <thead>
+                        <tr>
+                            <th>N° Proveído</th>
+                            <th>Fecha</th>
+                            <th>Expediente</th>
+                            <th>Instrucción</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="cuerpo-proveidos">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- PRE-RESOLUCIONES -->
+        <div id="preresoluciones" class="tab-content">
+            <div class="card">
+                <h3>⚖️ Pre-Resoluciones</h3>
+                <div class="filtros">
+                    <input type="text" id="filtro-preresolucion" placeholder="🔍 Buscar pre-resolución..." onkeyup="filtrarPreResoluciones()">
+                    <select id="filtro-estado-preresolucion" onchange="filtrarPreResoluciones()">
+                        <option value="">Todos los estados</option>
+                        <option value="Aprobado">Aprobado</option>
+                        <option value="Observado">Observado</option>
+                        <option value="Rechazado">Rechazado</option>
+                        <option value="Pendiente">Pendiente</option>
+                    </select>
+                </div>
+                <table id="tabla-preresoluciones">
+                    <thead>
+                        <tr>
+                            <th>N° Pre-Resolución</th>
+                            <th>Fecha</th>
+                            <th>Estado</th>
+                            <th>Expediente</th>
+                            <th>Analista</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="cuerpo-preresoluciones">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- CONSULTAS AVANZADAS -->
+        <div id="consultas" class="tab-content">
+            <div class="card">
+                <h3>🔍 Consultas Avanzadas</h3>
+                <div class="consultas-grid">
+                    <div class="consulta-item" onclick="ejecutarConsulta('fecha_preresolucion_numero')">
+                        <div class="consulta-icon">📅</div>
+                        <div class="consulta-info">
+                            <h4>Fechas de Pre-Resoluciones</h4>
+                            <p>Número y fecha de emisión de pre-resoluciones</p>
+                        </div>
+                    </div>
+                    
+                    <div class="consulta-item" onclick="ejecutarConsulta('encargados_fecha_preresolucion')">
+                        <div class="consulta-icon">👤</div>
+                        <div class="consulta-info">
+                            <h4>Analistas y Fechas</h4>
+                            <p>Pre-resoluciones con analistas responsables y fechas</p>
+                        </div>
+                    </div>
+                    
+                    <div class="consulta-item" onclick="ejecutarConsulta('fecha_mesa_partes_solicitud')">
+                        <div class="consulta-icon">📋</div>
+                        <div class="consulta-info">
+                            <h4>Fechas en Mesa de Partes</h4>
+                            <p>Expedientes con fechas de ingreso por mesa de partes</p>
+                        </div>
+                    </div>
+                    
+                    <div class="consulta-item" onclick="ejecutarConsulta('preresolucion_ordenada_fecha_solicitud')">
+                        <div class="consulta-icon">📊</div>
+                        <div class="consulta-info">
+                            <h4>Orden por Fecha Solicitud</h4>
+                            <p>Pre-resoluciones ordenadas por fecha de presentación</p>
+                        </div>
+                    </div>
+                    
+                    <div class="consulta-item" onclick="ejecutarConsulta('preresoluciones_con_gerencia')">
+                        <div class="consulta-icon">🏢</div>
+                        <div class="consulta-info">
+                            <h4>Pre-Resoluciones por Gerencia</h4>
+                            <p>Pre-resoluciones agrupadas por gerencia responsable</p>
+                        </div>
+                    </div>
+                    
+                    <div class="consulta-item" onclick="ejecutarConsulta('solicitudes_estado_analista')">
+                        <div class="consulta-icon">📝</div>
+                        <div class="consulta-info">
+                            <h4>Solicitudes y Estados</h4>
+                            <p>Solicitudes con estado, expediente y analista</p>
+                        </div>
+                    </div>
+                    
+                    <div class="consulta-item" onclick="ejecutarConsulta('solicitudes_por_mesa_partes')">
+                        <div class="consulta-icon">📦</div>
+                        <div class="consulta-info">
+                            <h4>Solicitudes por Mesa</h4>
+                            <p>Cantidad de solicitudes por mesa de partes</p>
+                        </div>
+                    </div>
+                    
+                    <div class="consulta-item" onclick="ejecutarConsulta('preresoluciones_por_normativa')">
+                        <div class="consulta-icon">⚖️</div>
+                        <div class="consulta-info">
+                            <h4>Pre-Resoluciones por Normativa</h4>
+                            <p>Pre-resoluciones y normativas aplicables</p>
+                        </div>
+                    </div>
+                    
+                    <div class="consulta-item" onclick="ejecutarConsulta('preresoluciones_por_mes_anio')">
+                        <div class="consulta-icon">📅</div>
+                        <div class="consulta-info">
+                            <h4>Pre-Resoluciones por Mes/Año</h4>
+                            <p>Pre-resoluciones agrupadas por período</p>
+                        </div>
+                    </div>
+                    
+                    <div class="consulta-item" onclick="ejecutarConsulta('preresoluciones_pendientes_por_analista')">
+                        <div class="consulta-icon">⏳</div>
+                        <div class="consulta-info">
+                            <h4>Pendientes por Analista</h4>
+                            <p>Pre-resoluciones pendientes por analista</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h3>📊 Resultados de la Consulta</h3>
+                <div class="filtros">
+                    <input type="text" id="filtro-consulta" placeholder="🔍 Filtrar resultados..." onkeyup="filtrarResultadosConsulta()">
+                </div>
+                <div class="resultados-consulta" id="resultados-consulta">
+                    <p class="placeholder">Seleccione una consulta para ver los resultados</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- NUEVO DOCUMENTO -->
+        <div id="nuevo" class="tab-content">
+            <!-- Formulario de Proveído -->
+            <div class="card">
+                <h3>📝 Generar Proveído</h3>
+                <form id="form-proveido" onsubmit="return crearProveido(event)">
+                    <div class="form-group">
+                        <label for="expediente-proveido">Expediente:</label>
+                        <select id="expediente-proveido" name="nuex" required>
+                            <option value="">Seleccionar expediente...</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="instruccion">Instrucción:</label>
+                        <textarea id="instruccion" name="ints" required placeholder="Ingrese las instrucciones para este proveído..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="gerencia">Gerencia Destino:</label>
+                        <select id="gerencia" name="idger" required>
+                            <option value="">Seleccionar gerencia...</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="subgerencia">Subgerencia Destino:</label>
+                        <select id="subgerencia" name="nsub" required>
+                            <option value="">Seleccionar subgerencia...</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-success">💾 Guardar Proveído</button>
+                </form>
+            </div>
+
+            <!-- Formulario de Pre-Resolución -->
+            <div class="card">
+                <h3>⚖️ Generar Pre-Resolución</h3>
+                <form id="form-preresolucion" onsubmit="return crearPreResolucion(event)">
+                    <div class="form-group">
+                        <label for="expediente-preresolucion">Expediente:</label>
+                        <select id="expediente-preresolucion" name="nuex" required>
+                            <option value="">Seleccionar expediente...</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="estado">Estado:</label>
+                        <select id="estado" name="estd" required>
+                            <option value="">Seleccionar estado...</option>
+                            <option value="Aprobado">Aprobado</option>
+                            <option value="Observado">Observado</option>
+                            <option value="Rechazado">Rechazado</option>
+                            <option value="Pendiente">Pendiente</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="fundamento-hecho">Fundamento de Hecho:</label>
+                        <textarea id="fundamento-hecho" name="fuhe" required placeholder="Describa los hechos..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="fundamento-derecho">Fundamento de Derecho:</label>
+                        <textarea id="fundamento-derecho" name="fude" required placeholder="Describa el fundamento legal..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="analista">Analista Responsable:</label>
+                        <select id="analista" name="dnia" required>
+                            <option value="">Seleccionar analista...</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-success">💾 Guardar Pre-Resolución</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/script_backup.js"></script>
+</body>
+</html>
